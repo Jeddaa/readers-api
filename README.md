@@ -20,15 +20,7 @@
   - [Prerequisites](#prerequisites)
   - [Install](#install)
   - [Usage](#usage)
-  - [Run tests](#run-tests)
-  <!-- - [Deployment](#deployment) -->
-- [👥 Authors](#authors)
-- [🔭 Future Features](#future-features)
-- [🤝 Contributing](#contributing)
-- [⭐️ Show your support](#support)
-- [🙏 Acknowledgements](#acknowledgements)
-- [❓ FAQ (OPTIONAL)](#faq)
-- [📝 License](#license)
+  - [Deployment](#deployment)
 
 <!-- PROJECT DESCRIPTION -->
 
@@ -59,7 +51,16 @@ Reader API is a website for book lovers.
 
 - display a list of books
 - add a book
+- get a book by id
+- get all books
+- update a book
+- delete a book
 - remove a book
+- add an author
+- get an author by id
+- get all authors
+- update an author
+- delete an author
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
