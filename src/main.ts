@@ -16,7 +16,7 @@ async function bootstrap() {
     .setDescription('API for readers')
     .setVersion('1.0')
     .addServer('http://localhost:3000', 'Local environment')
-    .addServer('https://staging.yourapi.com/', 'Staging')
+    .addServer('https://readers-api-9p4v.onrender.com', 'Staging')
     .addServer('https://production.yourapi.com/', 'Production')
     .addTag('Readers')
     .build();
