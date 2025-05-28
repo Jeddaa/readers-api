@@ -5,7 +5,6 @@ export type BookDocument = Book & Document & { _id: Types.ObjectId };
 
 @Schema({ timestamps: true, strict: false })
 export class Book {
-  ref: 'Author';
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Author' })
   authorId: Types.ObjectId;
 
