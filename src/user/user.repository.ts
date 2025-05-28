@@ -22,7 +22,9 @@ export class UserRepository {
   async findOneForLogIn(
     data: FilterQuery<UserDocument>,
   ): Promise<UserDocument> {
-    return await this.model.findOne(data).select('+password').exec();
+    const test = await this.model.findOne(data).select('+password').exec();
+    console.log('test', test);
+    return test;
   }
 
   async findAll(data?: FilterQuery<UserDocument>) {

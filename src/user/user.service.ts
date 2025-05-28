@@ -32,7 +32,7 @@ export class UserService {
     );
     data.password = getHashedPassword;
     const newUser = await this.userRepository.createUser(data);
-    return newUser;
+    return newUser.toObject();
   }
 
   /**
@@ -40,16 +40,16 @@ export class UserService {
    * @returns: the user details including the password
    */
   async findUserLogin(data: LogInDto) {
-    const getUser = await this.userRepository.findOneForLogIn({
+    return await this.userRepository.findOneForLogIn({
       email: data.email,
     });
-    if (!getUser) {
-      throw new HttpException(
-        { message: 'Invalid login Details' },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    return getUser;
+    // if (!getUser) {
+    //   throw new HttpException(
+    //     { message: 'Invalid login Details' },
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
+    // return getUser;
   }
   /**
    *
@@ -67,7 +67,7 @@ export class UserService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    return { message: 'successful', data: getUser };
+    return { message: 'successful', data: getUser.toObject() };
   }
 
   /**
@@ -102,6 +102,6 @@ export class UserService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    return { message: 'User information updated', data: updateUser };
+    return { message: 'User information updated', data: updateUser.toObject() };
   }
 }
