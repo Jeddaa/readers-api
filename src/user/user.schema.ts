@@ -22,8 +22,11 @@ export class User {
   })
   email: string;
 
-  @Prop({ type: MongooseSchema.Types.String, required: true })
+  @Prop({ type: MongooseSchema.Types.String, required: true, select: false })
   password: string;
+
+  @Prop({ type: MongooseSchema.Types.Boolean, default: false })
+  isAdmin?: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

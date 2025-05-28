@@ -17,15 +17,9 @@ import { AuthorRepository } from 'src/author/author.repository';
         schema: BookSchema,
       },
     ]),
-    MongooseModule.forFeature([
-      {
-        name: Author.name,
-        schema: AuthorSchema,
-      },
-    ]),
   ],
-  controllers: [BookController, AuthorController],
-  providers: [BookService, BookRepository, AuthorRepository, AuthorService],
+  controllers: [BookController],
+  providers: [BookService, BookRepository],
   exports: [],
 })
 export class BookModule {}

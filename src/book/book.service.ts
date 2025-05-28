@@ -17,7 +17,7 @@ export class BookService {
     Object.assign(createBook, {
       title: data.title,
       year: data.year,
-      authorId: new Types.ObjectId(data.authorId),
+      authorId: Types.ObjectId.createFromHexString(data.authorId),
     });
     const getAuthor = await this.authorService.getAuthorById(data.authorId);
     if (!getAuthor) {
