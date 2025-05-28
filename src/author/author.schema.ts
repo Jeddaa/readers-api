@@ -8,6 +8,9 @@ export class Author {
   @Prop({ type: MongooseSchema.Types.String, required: true })
   name: string;
 
+  @Prop({ type: MongooseSchema.Types.String, default: null })
+  alias: string;
+
   @Prop({ type: MongooseSchema.Types.Number })
   birthYear: number;
 }

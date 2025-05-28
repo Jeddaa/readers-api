@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 import { AuthorRepository } from './author.repository';
-import { CreateAuthorDto } from './author.dto';
+import { CreateAuthorDto, updateAuthorDto } from './author.dto';
 import { Author } from './author.schema';
 import { Injectable } from '@nestjs/common';
 
@@ -28,9 +28,9 @@ export class AuthorService {
     return this.AuthorRepository.findOneAuthor(new Types.ObjectId(AuthorId));
   }
 
-  async updateAuthor(data) {
+  async updateAuthor(data: updateAuthorDto) {
     const author = await this.AuthorRepository.findOneAuthor(
-      new Types.ObjectId(data.authorId),
+      Types.ObjectId.createFromHexString(data.authorId),
     );
     if (!author) {
       return {
