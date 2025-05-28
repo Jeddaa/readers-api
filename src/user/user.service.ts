@@ -1,14 +1,22 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 import { Types } from 'mongoose';
+import { LogInDto } from '../auth/auth.dto';
 
 @Injectable()
 export class UserService {
   constructor(
-    private readonly userRepository: UserRepository,
+    @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async createUser(data: CreateUserDto) {
@@ -27,6 +35,22 @@ export class UserService {
     return newUser;
   }
 
+  /**
+   * @desc: gets a user details for login
+   * @returns: the user details including the password
+   */
+  async findUserLogin(data: LogInDto) {
+    const getUser = await this.userRepository.findOneForLogIn({
+      email: data.email,
+    });
+    if (!getUser) {
+      throw new HttpException(
+        { message: 'Invalid login Details' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return getUser;
+  }
   /**
    *
    * @param userId
@@ -50,7 +74,7 @@ export class UserService {
    * @desc updates data in a user document
    * @returns the update document/user
    */
-  async updateUser(userId, data: UpdateUserDto) {
+  async updateUser(userId, updateData: UpdateUserDto) {
     const getUser = await this.userRepository.findUserById(
       Types.ObjectId.createFromHexString(userId),
     );
@@ -60,5 +84,24 @@ export class UserService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    if ('password' in updateData) {
+      throw new HttpException(
+        { message: 'Password update is not allowed through this endpoint.' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const updateUser = await this.userRepository.updateOne(
+      getUser._id,
+      updateData,
+    );
+    if (!updateUser) {
+      throw new HttpException(
+        {
+          message: 'Could not update user information. Please try again later',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return { message: 'User information updated', data: updateUser };
   }
 }

@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 
 import * as dotenv from 'dotenv';
+import { AuthorModule } from './author/author.module';
 
 dotenv.config();
 
@@ -14,7 +15,7 @@ dotenv.config();
   imports: [
     MongooseModule.forRoot(process.env.DATABASE_URL),
     BookModule,
-    AuthModule,
+    AuthorModule,
     UserModule,
     AuthModule,
   ],

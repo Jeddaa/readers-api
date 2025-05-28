@@ -8,6 +8,7 @@ import { AuthorService } from 'src/author/author.service';
 import { Author, AuthorSchema } from 'src/author/author.schema';
 import { AuthorController } from 'src/author/author.controller';
 import { AuthorRepository } from 'src/author/author.repository';
+import { AuthorModule } from 'src/author/author.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AuthorRepository } from 'src/author/author.repository';
         schema: BookSchema,
       },
     ]),
+    AuthorModule,
   ],
   controllers: [BookController],
   providers: [BookService, BookRepository],
