@@ -10,7 +10,7 @@ import { UserController } from './user.controller';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    forwardRef(() => AuthModule),
+    // forwardRef(() => AuthModule),
   ],
   providers: [UserRepository, UserService],
   controllers: [UserController],

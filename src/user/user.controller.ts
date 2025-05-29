@@ -8,8 +8,4 @@ import { UserService } from './user.service';
 @Injectable()
 export class UserController {
   constructor(private readonly userService: UserService) {}
-  @Post()
-  async Register(@Body() body: CreateUserDto) {
-    return await this.userService.createUser(body);
-  }
 }

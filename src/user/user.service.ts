@@ -14,8 +14,8 @@ import { LogInDto } from '../auth/auth.dto';
 @Injectable()
 export class UserService {
   constructor(
-    @Inject(forwardRef(() => AuthService))
-    private readonly authService: AuthService,
+    // @Inject(forwardRef(() => AuthService))
+    // private readonly authService: AuthService,
     private readonly userRepository: UserRepository,
   ) {}
 
@@ -24,13 +24,9 @@ export class UserService {
     if (getUser) {
       return {
         message: 'User already exists. Please log in to your account',
-        data: getUser,
+        data: getUser.toObject(),
       };
     }
-    const getHashedPassword = await this.authService.getHashedPassword(
-      data.password,
-    );
-    data.password = getHashedPassword;
     const newUser = await this.userRepository.createUser(data);
     return newUser.toObject();
   }
@@ -43,13 +39,12 @@ export class UserService {
     return await this.userRepository.findOneForLogIn({
       email: data.email,
     });
-    // if (!getUser) {
-    //   throw new HttpException(
-    //     { message: 'Invalid login Details' },
-    //     HttpStatus.BAD_REQUEST,
-    //   );
-    // }
-    // return getUser;
+  }
+
+  async findUserByEmail(email: string) {
+    return await this.userRepository.findOne({
+      email: email,
+    });
   }
   /**
    *

@@ -1,23 +1,22 @@
-import {
-  Body,
-  Controller,
-  HttpException,
-  HttpStatus,
-  Post,
-  UseGuards,
-  Request,
-} from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Request } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { LogInDto } from './auth.dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
+import { CreateUserDto } from 'src/user/user.dto';
+import { LocalAuthGuard } from './auth.guard';
 
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(AuthGuard('local'))
+  @Post()
+  async Register(@Body() body: CreateUserDto) {
+    return await this.authService.createUser(body);
+  }
+
+  @UseGuards(LocalAuthGuard)
   @Post('/login')
   async logIn(@Request() req, @Body() body: LogInDto) {
     try {
@@ -26,7 +25,6 @@ export class AuthController {
     } catch (error) {
       throw error;
     }
-    // return await this.authService.login(body);
   }
   async changePassword() {}
 }
