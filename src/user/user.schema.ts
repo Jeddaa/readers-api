@@ -25,6 +25,9 @@ export class User {
   @Prop({ type: MongooseSchema.Types.String, required: true, select: false })
   password: string;
 
+  @Prop({ type: MongooseSchema.Types.String, default: 'user' })
+  role?: string;
+
   @Prop({ type: MongooseSchema.Types.Boolean, default: false })
   isAdmin?: boolean;
 }

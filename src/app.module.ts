@@ -5,19 +5,29 @@ import { BookModule } from './book/book.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { AuthorModule } from './author/author.module';
 
 import * as dotenv from 'dotenv';
-import { AuthorModule } from './author/author.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 dotenv.config();
 
 @Module({
   imports: [
-    MongooseModule.forRoot(process.env.DATABASE_URL),
+    ConfigModule.forRoot({
+      isGlobal: true, // makes config available everywhere without re-import
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get('DATABASE_URL'),
+      }),
+      inject: [ConfigService],
+    }),
+    AuthModule,
+    UserModule,
     BookModule,
     AuthorModule,
-    UserModule,
-    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

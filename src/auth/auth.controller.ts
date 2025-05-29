@@ -4,14 +4,14 @@ import { LogInDto } from './auth.dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from 'src/user/user.dto';
-import { LocalAuthGuard } from './auth.guard';
+import { LocalAuthGuard } from './local-auth.guard';
 
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
+  @Post('/register')
   async Register(@Body() body: CreateUserDto) {
     return await this.authService.createUser(body);
   }
@@ -20,8 +20,7 @@ export class AuthController {
   @Post('/login')
   async logIn(@Request() req, @Body() body: LogInDto) {
     try {
-      console.log('req user', req.user);
-      return req.user;
+      return await this.authService.generateJwtToken(req.user);
     } catch (error) {
       throw error;
     }

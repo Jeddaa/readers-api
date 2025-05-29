@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,17 +12,21 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type'],
   });
 
+  const configService = app.get(ConfigService);
+
   const options = new DocumentBuilder()
     .setTitle('Readers API')
     .setDescription('API for readers')
     .setVersion('1.0')
-    .addServer(`${process.env.ENV_URL}`, `${process.env.ENVIRONMENT}`)
+    // .addServer(`${process.env.ENV_URL}`, `${process.env.ENVIRONMENT}`)
+    .addServer(configService.get('ENV_URL'), configService.get('ENVIRONMENT'))
     .addTag('Readers')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api/docs', app, document);
 
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(configService.get('PORT') || 3000);
 }
 bootstrap();

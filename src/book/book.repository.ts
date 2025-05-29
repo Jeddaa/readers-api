@@ -16,9 +16,9 @@ export class BookRepository {
     return this.model.findById(bookId);
   }
 
-  async getAllBooks() {
-    return this.model.find();
-  }
+  // async getAllBooks() {
+  //   return this.model.find();
+  // }
 
   async saveBook(data: BookDocument) {
     return data.save();
@@ -39,5 +39,45 @@ export class BookRepository {
   async findByAuthorId(id) {
     const test = await this.model.find({ authorId: new Types.ObjectId(id) });
     return test;
+  }
+
+  async getAllBooks(id?: Types.ObjectId) {
+    return await this.model.aggregate([
+      {
+        $match: {
+          _id: id,
+        },
+      },
+      {
+        $lookup: {
+          from: 'authors',
+          localField: 'authorId',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
+        $lookup: {
+          from: 'category',
+          localField: 'categoryId',
+          foreignField: '_id',
+          as: 'category',
+        },
+      },
+      {
+        $unwind: '$author',
+      },
+      {
+        $unwind: '$category',
+      },
+      {
+        $project: {
+          authorName: {
+            $concat: ['$author.firstName', '', '$author.lastName'],
+          },
+          category,
+        },
+      },
+    ]);
   }
 }

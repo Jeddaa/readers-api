@@ -9,7 +9,7 @@ import { UserRepository } from 'src/user/user.repository';
 import { LogInDto } from './auth.dto';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
-import { get } from 'mongoose';
+import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/user/user.dto';
 
 @Injectable()
@@ -17,6 +17,7 @@ export class AuthService {
   constructor(
     // @Inject(forwardRef(() => UserService))
     private readonly userservice: UserService,
+    private jwtService: JwtService,
   ) {}
   async getHashedPassword(password: string) {
     return bcrypt.hashSync(password, 10);
@@ -57,17 +58,16 @@ export class AuthService {
     return getUser.toObject();
   }
 
-  // async login(data: LogInDto) {
-  //   try {
-  //     const getUser = await this.userservice.findUserLogin(data);
-  //   } catch (error) {
-  //     console.log('@@@@@@log in error@@@@@@@@@', error);
-  //     throw new HttpException(
-  //       { message: 'Internal server error' },
-  //       HttpStatus.SERVICE_UNAVAILABLE,
-  //     );
-  //   }
-  // }
+  async generateJwtToken(user: any) {
+    const payload = {
+      email: user.email,
+    };
+    return {
+      ...user,
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+
   async login(user) {
     const payload = { email: user.email, sub: user._id, role: user.role };
     return {

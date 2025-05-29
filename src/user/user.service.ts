@@ -52,17 +52,15 @@ export class UserService {
    * @desc gets a user using the userid
    * @returns the user
    */
-  async getUser(userId: string) {
-    const getUser = await this.userRepository.findUserById(
-      Types.ObjectId.createFromHexString(userId),
-    );
+  async getUser(userId: Types.ObjectId) {
+    const getUser = await this.userRepository.findUserById(userId);
     if (!getUser) {
       throw new HttpException(
         { message: 'Could not get user. Please try again later' },
         HttpStatus.BAD_REQUEST,
       );
     }
-    return { message: 'successful', data: getUser.toObject() };
+    return { message: 'successful', data: getUser };
   }
 
   /**

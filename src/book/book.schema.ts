@@ -8,10 +8,26 @@ export class Book {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Author' })
   authorId: Types.ObjectId;
 
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
+
   @Prop({ type: MongooseSchema.Types.String, required: true })
   title: string;
 
+  @Prop({ type: MongooseSchema.Types.String, required: true })
+  description: string;
+
+  @Prop({
+    type: [MongooseSchema.Types.ObjectId],
+    required: true,
+    ref: 'Category',
+  })
+  categoryId: Types.ObjectId[];
+
   @Prop({ type: MongooseSchema.Types.Number, required: true })
   year: number;
+
+  @Prop({ type: MongooseSchema.Types.Number, required: true, max: 5 })
+  ratings: number;
 }
 export const BookSchema = SchemaFactory.createForClass(Book);

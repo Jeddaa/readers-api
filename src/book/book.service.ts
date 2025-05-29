@@ -12,13 +12,7 @@ export class BookService {
     private readonly authorService: AuthorService,
   ) {}
 
-  async createBook(data) {
-    const createBook = new Book();
-    Object.assign(createBook, {
-      title: data.title,
-      year: data.year,
-      authorId: Types.ObjectId.createFromHexString(data.authorId),
-    });
+  async createBook(userId: Types.ObjectId, data: CreateBookDto) {
     const getAuthor = await this.authorService.getAuthorById(data.authorId);
     if (!getAuthor) {
       return {
@@ -26,8 +20,26 @@ export class BookService {
         data: null,
       };
     }
+    // const getCategory = await this.categoryService.getCategoryById(data.authorId);
+    // if (!getCategory) {
+    //   return {
+    //     message: 'Category not found. Please enter a valid category id',
+    //     data: null,
+    //   };
+    // }
+    const createBook = new Book();
+    Object.assign(createBook, {
+      authorId: Types.ObjectId.createFromHexString(data.authorId),
+      userId: userId,
+      title: data.title,
+      description: data.description,
+      year: data.year,
+      categoryId: Types.ObjectId.createFromHexString(data.categoryId),
+      ratings: data.ratings,
+    });
+
     const createdBook = await this.bookRepository.createBook(createBook);
-    return createdBook;
+    return { message: 'Book added successfully', data: createdBook };
   }
   async getAllBooks() {
     return this.bookRepository.getAllBooks();

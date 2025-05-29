@@ -23,7 +23,6 @@ export class UserRepository {
     data: FilterQuery<UserDocument>,
   ): Promise<UserDocument> {
     const test = await this.model.findOne(data).select('+password').exec();
-    console.log('test', test);
     return test;
   }
 
