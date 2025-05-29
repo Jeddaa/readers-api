@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import {
   IsString,
   IsNotEmpty,
@@ -7,6 +7,7 @@ import {
   Max,
   IsNumber,
   Min,
+  IsArray,
 } from 'class-validator';
 
 export class CreateBookDto {
@@ -28,9 +29,9 @@ export class CreateBookDto {
   authorId: string;
 
   @ApiProperty()
-  @IsString()
+  @IsArray()
   @IsNotEmpty()
-  categoryId: string;
+  categoryIds: string[];
 
   @ApiProperty()
   @IsString()
@@ -45,7 +46,7 @@ export class CreateBookDto {
   ratings: number;
 }
 
-export class UpdateBookDto extends CreateBookDto {
+export class UpdateBookDto extends PartialType(CreateBookDto) {
   // @ApiProperty()
   // @IsString()
   // @IsNotEmpty()

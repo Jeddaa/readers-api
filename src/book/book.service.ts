@@ -2,14 +2,16 @@ import { Types } from 'mongoose';
 import { BookRepository } from './book.repository';
 import { CreateBookDto, UpdateBookDto } from './book.dto';
 import { Book } from './book.schema';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AuthorService } from 'src/author/author.service';
+import { CategoryService } from 'src/category/category.service';
 
 @Injectable()
 export class BookService {
   constructor(
     private readonly bookRepository: BookRepository,
     private readonly authorService: AuthorService,
+    private readonly categoryService: CategoryService,
   ) {}
 
   async createBook(userId: Types.ObjectId, data: CreateBookDto) {
@@ -20,21 +22,23 @@ export class BookService {
         data: null,
       };
     }
-    // const getCategory = await this.categoryService.getCategoryById(data.authorId);
-    // if (!getCategory) {
-    //   return {
-    //     message: 'Category not found. Please enter a valid category id',
-    //     data: null,
-    //   };
-    // }
+    const getCategory = await this.categoryService.findMultipleIds(
+      data.categoryIds,
+    );
+    if (!getCategory) {
+      return {
+        message: 'Category not found. Please enter a valid category id',
+        data: null,
+      };
+    }
     const createBook = new Book();
     Object.assign(createBook, {
-      authorId: Types.ObjectId.createFromHexString(data.authorId),
+      authorId: getAuthor._id,
       userId: userId,
       title: data.title,
       description: data.description,
       year: data.year,
-      categoryId: Types.ObjectId.createFromHexString(data.categoryId),
+      categoryId: getCategory,
       ratings: data.ratings,
     });
 
@@ -49,17 +53,64 @@ export class BookService {
     return this.bookRepository.findOneBook(new Types.ObjectId(bookId));
   }
 
-  async updateBook(data: UpdateBookDto) {
-    const book = await this.bookRepository.findOneBook(
-      new Types.ObjectId(data.bookId),
+  /**
+   *
+   * @param userId
+   * @param bookId
+   * @param data
+   * @desc: takes in the userId, gets the book using the bookId, confirms if the userId is
+   * the same as the userid in the book document
+   * @returns
+   */
+  async updateBook(
+    userId: Types.ObjectId,
+    bookId: string,
+    data: UpdateBookDto,
+  ) {
+    const getBook = await this.bookRepository.findOneBook(
+      Types.ObjectId.createFromHexString(bookId),
     );
-    if (!book) {
+    if (!getBook) {
       return {
-        message: 'Author not found. Please enter a valid author id',
+        message: 'Book not found. Please pass a valid book id',
         data: null,
       };
     }
-    return this.bookRepository.update(book._id, data);
+    if (getBook.userId.equals(userId)) {
+      throw new HttpException(
+        { message: 'Only the creator of this book can update it' },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+    let author = null;
+    let categories = null;
+    if (data.authorId) {
+      author = await this.authorService.getAuthorById(data.authorId);
+      if (!author) {
+        return {
+          message: 'Author not found. Please enter a valid author ID',
+          data: null,
+        };
+      }
+      data.authorId = author._id;
+    }
+    if (data.categoryIds && data.categoryIds.length > 0) {
+      categories = await this.categoryService.findMultipleIds(data.categoryIds);
+
+      if (!categories || categories.length !== data.categoryIds.length) {
+        return {
+          message: 'Some category IDs are invalid. Please check and try again.',
+          data: null,
+        };
+      }
+    }
+    data.categoryIds = categories;
+
+    const updatedBook = await this.bookRepository.update(getBook._id, data);
+    return {
+      message: 'Book updated successfully',
+      data: updatedBook,
+    };
   }
 
   async deleteBook(bookId: string) {

@@ -22,7 +22,7 @@ export class Book {
     required: true,
     ref: 'Category',
   })
-  categoryId: Types.ObjectId[];
+  categoryIds: Types.ObjectId[];
 
   @Prop({ type: MongooseSchema.Types.Number, required: true })
   year: number;

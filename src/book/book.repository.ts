@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
 import { Book, BookDocument } from './book.schema';
 import { CreateBookDto } from './book.dto';
+import { title } from 'process';
 
 @Injectable()
 export class BookRepository {
@@ -24,9 +25,7 @@ export class BookRepository {
     return data.save();
   }
   async update(id: Types.ObjectId, updateQuery?: UpdateQuery<BookDocument>) {
-    return this.model.findOneAndUpdate({ _id: id }, updateQuery, {
-      new: true,
-    });
+    return this.model.findByIdAndUpdate(id, updateQuery);
   }
 
   async delete(bookId) {
@@ -58,10 +57,10 @@ export class BookRepository {
       },
       {
         $lookup: {
-          from: 'category',
-          localField: 'categoryId',
+          from: 'categories',
+          localField: 'categoryIds',
           foreignField: '_id',
-          as: 'category',
+          as: 'categories',
         },
       },
       {
@@ -72,10 +71,14 @@ export class BookRepository {
       },
       {
         $project: {
+          title: 1,
+          description: 1,
+          year: 1,
+          ratings: 1,
           authorName: {
             $concat: ['$author.firstName', '', '$author.lastName'],
           },
-          category,
+          categories: '$categories.name',
         },
       },
     ]);

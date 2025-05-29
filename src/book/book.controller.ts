@@ -74,9 +74,13 @@ export class BookController {
     description: 'Update a book only by authenticated user',
     // type: DoctorNoteResponseDto,
   })
-  @Put()
-  async updateBook(@Body() data: UpdateBookDto) {
-    const add = await this.bookService.updateBook(data);
+  @Put('update/:bookId')
+  async updateBook(
+    @Request() req,
+    @Param() bookId: string,
+    @Body() data: UpdateBookDto,
+  ) {
+    const add = await this.bookService.updateBook(req.user._id, bookId, data);
     return add;
   }
 }
