@@ -4,11 +4,8 @@ import { Book, BookSchema } from './book.schema';
 import { BookController } from './book.controller';
 import { BookRepository } from './book.repository';
 import { BookService } from './book.service';
-import { AuthorService } from 'src/author/author.service';
-import { Author, AuthorSchema } from 'src/author/author.schema';
-import { AuthorController } from 'src/author/author.controller';
-import { AuthorRepository } from 'src/author/author.repository';
 import { AuthorModule } from 'src/author/author.module';
+import { CategoryModule } from 'src/category/category.module';
 
 @Module({
   imports: [
@@ -19,6 +16,7 @@ import { AuthorModule } from 'src/author/author.module';
       },
     ]),
     AuthorModule,
+    CategoryModule,
   ],
   controllers: [BookController],
   providers: [BookService, BookRepository],

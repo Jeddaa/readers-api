@@ -44,7 +44,7 @@ export class BookRepository {
     return await this.model.aggregate([
       {
         $match: {
-          _id: id,
+          _id: id ?? {},
         },
       },
       {
