@@ -12,7 +12,7 @@ export class Author {
   name: string;
 
   @Prop({ type: MongooseSchema.Types.String, default: null })
-  alias: string;
+  alias?: string;
 
   @Prop({ type: MongooseSchema.Types.Number })
   birthYear: number;

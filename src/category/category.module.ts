@@ -1,9 +1,11 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { CategoryController } from './category.controller';
 import { CategoryRepository } from './category.repository';
 import { CategoryService } from './category.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Category, CategorySchema } from './category.schema';
+import { BookModule } from 'src/book/book.module';
+import { BookService } from 'src/book/book.service';
 
 @Module({
   imports: [
@@ -13,6 +15,7 @@ import { Category, CategorySchema } from './category.schema';
         schema: CategorySchema,
       },
     ]),
+    // forwardRef(() => BookModule),
   ],
   providers: [CategoryRepository, CategoryService],
   controllers: [CategoryController],

@@ -11,11 +11,11 @@ import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/user/user.dto';
+import { User, UserDocument } from 'src/user/user.schema';
 
 @Injectable()
 export class AuthService {
   constructor(
-    // @Inject(forwardRef(() => UserService))
     private readonly userservice: UserService,
     private jwtService: JwtService,
   ) {}
@@ -68,7 +68,7 @@ export class AuthService {
     };
   }
 
-  async login(user) {
+  async login(user: UserDocument) {
     const payload = { email: user.email, sub: user._id, role: user.role };
     return {
       access_token: this.jwtService.sign(payload),

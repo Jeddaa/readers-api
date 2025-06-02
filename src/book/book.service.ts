@@ -2,16 +2,23 @@ import { Types } from 'mongoose';
 import { BookRepository } from './book.repository';
 import { CreateBookDto, UpdateBookDto } from './book.dto';
 import { Book } from './book.schema';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { AuthorService } from 'src/author/author.service';
 import { CategoryService } from 'src/category/category.service';
 
 @Injectable()
 export class BookService {
   constructor(
+    // @Inject(forwardRef(() => CategoryService))
+    private readonly categoryService: CategoryService,
     private readonly bookRepository: BookRepository,
     private readonly authorService: AuthorService,
-    private readonly categoryService: CategoryService,
   ) {}
 
   async createBook(userId: Types.ObjectId, data: CreateBookDto) {
@@ -38,15 +45,15 @@ export class BookService {
       title: data.title,
       description: data.description,
       year: data.year,
-      categoryId: getCategory,
+      categoryIds: getCategory,
       ratings: data.ratings,
     });
 
     const createdBook = await this.bookRepository.createBook(createBook);
     return { message: 'Book added successfully', data: createdBook };
   }
-  async getAllBooks() {
-    return this.bookRepository.getAllBooks();
+  async getAllBooks(data?) {
+    return this.bookRepository.getAllBooks(data ?? {});
   }
 
   async getBookById(bookId: string) {
@@ -113,7 +120,22 @@ export class BookService {
     };
   }
 
-  async deleteBook(bookId: string) {
+  async deleteBook(user, bookId: string) {
+    const book = await this.bookRepository.findOneBook(
+      new Types.ObjectId(bookId),
+    );
+    if (!book) {
+      throw new HttpException(
+        { message: 'Could not find book. Check the id and try again' },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    if (!book.userId.equals(user._id)) {
+      throw new HttpException(
+        { message: 'Only creator can delete book' },
+        HttpStatus.FORBIDDEN,
+      );
+    }
     const removeBook = await this.bookRepository.delete(bookId);
     if (removeBook.deletedCount === 0) {
       return {
@@ -128,6 +150,14 @@ export class BookService {
   }
 
   async getBooksByAuthorId(authorId: string) {
-    return this.bookRepository.findByAuthorId(authorId);
+    return this.bookRepository.getAllBooks({
+      authorId: new Types.ObjectId(authorId),
+    });
+  }
+
+  async getBooksByCategoryId(categoryId: string) {
+    return this.bookRepository.getAllBooks({
+      categoryId: new Types.ObjectId(categoryId),
+    });
   }
 }

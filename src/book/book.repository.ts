@@ -17,10 +17,6 @@ export class BookRepository {
     return this.model.findById(bookId);
   }
 
-  // async getAllBooks() {
-  //   return this.model.find();
-  // }
-
   async saveBook(data: BookDocument) {
     return data.save();
   }
@@ -28,24 +24,35 @@ export class BookRepository {
     return this.model.findByIdAndUpdate(id, updateQuery);
   }
 
-  async delete(bookId) {
+  async delete(bookId: string) {
     const deleteBook = await this.model.deleteOne({
       _id: new Types.ObjectId(bookId),
     });
     return deleteBook;
   }
 
-  async findByAuthorId(id) {
-    const test = await this.model.find({ authorId: new Types.ObjectId(id) });
+  async findByAuthorId(authorId: string) {
+    const test = await this.model.find({
+      authorId: new Types.ObjectId(authorId),
+    });
     return test;
   }
 
-  async getAllBooks(id?: Types.ObjectId) {
-    return await this.model.aggregate([
+  async getAllBooks(data?) {
+    const match: Record<string, any> = {};
+
+    if (data?.id) {
+      match._id = new Types.ObjectId(data.id);
+    }
+    if (data?.categoryId) {
+      match.categoryIds = new Types.ObjectId(data.categoryId);
+    }
+    if (data?.authorId) {
+      match.authorId = new Types.ObjectId(data.authorId);
+    }
+    const result = await this.model.aggregate([
       {
-        $match: {
-          _id: id ?? {},
-        },
+        $match: match ?? {},
       },
       {
         $lookup: {
@@ -67,20 +74,17 @@ export class BookRepository {
         $unwind: '$author',
       },
       {
-        $unwind: '$category',
-      },
-      {
         $project: {
+          _id: 1,
           title: 1,
           description: 1,
           year: 1,
           ratings: 1,
-          authorName: {
-            $concat: ['$author.firstName', '', '$author.lastName'],
-          },
+          authorName: '$author.name',
           categories: '$categories.name',
         },
       },
     ]);
+    return result;
   }
 }

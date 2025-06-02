@@ -14,8 +14,8 @@ import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CreateBookDto, UpdateBookDto } from './book.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
-@Controller('book')
-@ApiTags('book')
+@Controller('books')
+@ApiTags('books')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
   @ApiOkResponse({
@@ -31,9 +31,24 @@ export class BookController {
   @ApiOkResponse({
     description: 'Add a book only by authenticated user',
   })
-  @Post()
+  @Post('/add')
   async addBook(@Request() req, @Body() data: CreateBookDto) {
     const add = await this.bookService.createBook(req.user._id, data);
+    return add;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'Update a book only by authenticated user',
+  })
+  @Put('update/:bookId')
+  async updateBook(
+    @Request() req,
+    @Param() bookId: string,
+    @Body() data: UpdateBookDto,
+  ) {
+    const add = await this.bookService.updateBook(req.user._id, bookId, data);
     return add;
   }
 
@@ -43,8 +58,8 @@ export class BookController {
     description: 'Delete a book only by authenticated user',
   })
   @Delete(':bookId')
-  async removeBook(@Param('bookId') bookId: string) {
-    return this.bookService.deleteBook(bookId);
+  async removeBook(@Request() req, @Param('bookId') bookId: string) {
+    return this.bookService.deleteBook(req.user, bookId);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -60,8 +75,7 @@ export class BookController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOkResponse({
-    description: 'Get an author details only by authenticated user',
-    // type: DoctorNoteResponseDto,
+    description: 'Get books by an author only by authenticated user',
   })
   @Get('author/:authorId')
   async getBooksByAuthor(@Param('authorId') authorId: string) {
@@ -71,16 +85,10 @@ export class BookController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOkResponse({
-    description: 'Update a book only by authenticated user',
-    // type: DoctorNoteResponseDto,
+    description: 'Get books in a category only by authenticated user',
   })
-  @Put('update/:bookId')
-  async updateBook(
-    @Request() req,
-    @Param() bookId: string,
-    @Body() data: UpdateBookDto,
-  ) {
-    const add = await this.bookService.updateBook(req.user._id, bookId, data);
-    return add;
+  @Get('author/:categoryId')
+  async getBooksByCategory(@Param('categoryId') categoryId: string) {
+    return this.bookService.getBooksByAuthorId(categoryId);
   }
 }

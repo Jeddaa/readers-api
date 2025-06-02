@@ -15,23 +15,8 @@ export class CreateAuthorDto {
   name: string;
 
   @ApiPropertyOptional()
-  @IsInt()
-  @IsPositive()
-  @IsOptional()
-  @Max(new Date().getFullYear())
-  birthYear: number;
-}
-
-export class updateAuthorDto {
-  @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  authorId: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  name: string;
+  alias: string;
 
   @ApiPropertyOptional()
   @IsInt()
@@ -40,3 +25,5 @@ export class updateAuthorDto {
   @Max(new Date().getFullYear())
   birthYear: number;
 }
+
+export class UpdateAuthorDto extends CreateAuthorDto {}
