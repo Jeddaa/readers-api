@@ -6,11 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { AuthorModule } from './author/author.module';
-
-import * as dotenv from 'dotenv';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-
-dotenv.config();
 
 @Module({
   imports: [

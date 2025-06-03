@@ -18,7 +18,6 @@ async function bootstrap() {
     .setTitle('Readers API')
     .setDescription('API for readers')
     .setVersion('1.0')
-    // .addServer(`${process.env.ENV_URL}`, `${process.env.ENVIRONMENT}`)
     .addServer(configService.get('ENV_URL'), configService.get('ENVIRONMENT'))
     .addTag('Readers')
     .addBearerAuth()

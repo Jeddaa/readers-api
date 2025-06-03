@@ -14,6 +14,9 @@ import { AuthorService } from './author.service';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CreateAuthorDto, UpdateAuthorDto } from './author.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { Role } from 'src/auth/auth.types';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('authors')
 @ApiTags('authors')
