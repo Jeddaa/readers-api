@@ -55,7 +55,7 @@ export class AuthorController {
   @ApiOkResponse({
     description: 'Delete an author',
   })
-  @Delete(':AuthorId')
+  @Delete(':authorId')
   async removeAuthor(@Request() req, @Param('AuthorId') AuthorId: string) {
     return this.authorService.deleteAuthor(req.user._id, AuthorId);
   }
@@ -65,7 +65,7 @@ export class AuthorController {
   @ApiOkResponse({
     description: 'Get an author',
   })
-  @Get(':AuthorId')
+  @Get(':authorId')
   async getOneAuthor(@Param('AuthorId') AuthorId: string) {
     return this.authorService.getAuthorById(AuthorId);
   }
