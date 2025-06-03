@@ -8,7 +8,7 @@ import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
 
 @Injectable()
 export class AuthorService {
-  constructor(private readonly AuthorRepository: AuthorRepository) {}
+  constructor(private readonly authorRepository: AuthorRepository) {}
 
   async createAuthor(user: UserDocument, data: CreateAuthorDto) {
     const createAuthor = new Author();
@@ -19,17 +19,17 @@ export class AuthorService {
       alias: data.alias,
     });
 
-    const createdAuthor = await this.AuthorRepository.createAuthor(
+    const createdAuthor = await this.authorRepository.createAuthor(
       createAuthor,
     );
     return createdAuthor;
   }
   async getAllAuthors() {
-    return this.AuthorRepository.getAllAuthors();
+    return this.authorRepository.getAllAuthors();
   }
 
   async getAuthorById(authorId: string) {
-    return this.AuthorRepository.findOneAuthor(new Types.ObjectId(authorId));
+    return this.authorRepository.findOneAuthor(new Types.ObjectId(authorId));
   }
 
   /**
@@ -45,7 +45,7 @@ export class AuthorService {
     data: UpdateAuthorDto,
     authorId: string,
   ) {
-    const author = await this.AuthorRepository.findOneAuthor(
+    const author = await this.authorRepository.findOneAuthor(
       Types.ObjectId.createFromHexString(authorId),
     );
     if (!author) {
@@ -62,7 +62,7 @@ export class AuthorService {
         HttpStatus.FORBIDDEN,
       );
     }
-    return this.AuthorRepository.update(author._id, data);
+    return this.authorRepository.update(author._id, data);
   }
 
   /**
@@ -74,7 +74,7 @@ export class AuthorService {
    * @returns
    */
   async deleteAuthor(userId: Types.ObjectId, authorId: string) {
-    const author = await this.AuthorRepository.findOneAuthor(
+    const author = await this.authorRepository.findOneAuthor(
       Types.ObjectId.createFromHexString(authorId),
     );
     if (!author) {
@@ -91,6 +91,6 @@ export class AuthorService {
         HttpStatus.FORBIDDEN,
       );
     }
-    return this.AuthorRepository.delete(author._id);
+    return this.authorRepository.delete(author._id);
   }
 }

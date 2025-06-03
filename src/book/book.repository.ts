@@ -42,13 +42,13 @@ export class BookRepository {
     const match: Record<string, any> = {};
 
     if (data?.id) {
-      match._id = new Types.ObjectId(data.id);
+      match._id = data.id;
     }
     if (data?.categoryId) {
-      match.categoryIds = new Types.ObjectId(data.categoryId);
+      match.categoryIds = { $in: [data.categoryId] };
     }
     if (data?.authorId) {
-      match.authorId = new Types.ObjectId(data.authorId);
+      match.authorId = data.authorId;
     }
     const result = await this.model.aggregate([
       {

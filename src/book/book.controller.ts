@@ -45,10 +45,10 @@ export class BookController {
   @Put('update/:bookId')
   async updateBook(
     @Request() req,
-    @Param() bookId: string,
+    @Param('bookId') bookId: string,
     @Body() data: UpdateBookDto,
   ) {
-    const add = await this.bookService.updateBook(req.user._id, bookId, data);
+    const add = await this.bookService.updateBook(req.user, bookId, data);
     return add;
   }
 
@@ -87,8 +87,8 @@ export class BookController {
   @ApiOkResponse({
     description: 'Get books in a category only by authenticated user',
   })
-  @Get('author/:categoryId')
+  @Get('category/:categoryId')
   async getBooksByCategory(@Param('categoryId') categoryId: string) {
-    return this.bookService.getBooksByAuthorId(categoryId);
+    return this.bookService.getBooksByCategoryId(categoryId);
   }
 }

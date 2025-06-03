@@ -66,7 +66,7 @@ export class AuthorController {
     description: 'Get an author',
   })
   @Get(':authorId')
-  async getOneAuthor(@Param('AuthorId') AuthorId: string) {
-    return this.authorService.getAuthorById(AuthorId);
+  async getOneAuthor(@Param('authorId') authorId: string) {
+    return this.authorService.getAuthorById(authorId);
   }
 }

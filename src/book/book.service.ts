@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { AuthorService } from 'src/author/author.service';
 import { CategoryService } from 'src/category/category.service';
+import { UserDocument } from 'src/user/user.schema';
 
 @Injectable()
 export class BookService {
@@ -57,7 +58,7 @@ export class BookService {
   }
 
   async getBookById(bookId: string) {
-    return this.bookRepository.findOneBook(new Types.ObjectId(bookId));
+    return this.bookRepository.getAllBooks({ id: new Types.ObjectId(bookId) });
   }
 
   /**
@@ -69,11 +70,7 @@ export class BookService {
    * the same as the userid in the book document
    * @returns
    */
-  async updateBook(
-    userId: Types.ObjectId,
-    bookId: string,
-    data: UpdateBookDto,
-  ) {
+  async updateBook(user: UserDocument, bookId: string, data: UpdateBookDto) {
     const getBook = await this.bookRepository.findOneBook(
       Types.ObjectId.createFromHexString(bookId),
     );
@@ -83,7 +80,7 @@ export class BookService {
         data: null,
       };
     }
-    if (getBook.userId.equals(userId)) {
+    if (!getBook.userId.equals(user._id)) {
       throw new HttpException(
         { message: 'Only the creator of this book can update it' },
         HttpStatus.FORBIDDEN,
@@ -110,8 +107,8 @@ export class BookService {
           data: null,
         };
       }
+      data.categoryIds = categories;
     }
-    data.categoryIds = categories;
 
     const updatedBook = await this.bookRepository.update(getBook._id, data);
     return {

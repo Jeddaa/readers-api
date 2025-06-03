@@ -14,8 +14,8 @@ export class AuthorRepository {
     return this.model.create(data);
   }
 
-  async findOneAuthor(AuthorId: Types.ObjectId) {
-    return this.model.findById(AuthorId);
+  async findOneAuthor(authorId: Types.ObjectId) {
+    return this.model.findById(authorId);
   }
 
   async getAllAuthors() {
